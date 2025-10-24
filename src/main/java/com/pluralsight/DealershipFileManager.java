@@ -23,6 +23,18 @@ public Dealership getDealership(){
     return null;
 }
 public void saveDealership(Dealership dealership){
+    try{
+        BufferedWriter buffWriter = new BufferedWriter(new FileWriter("src/main/resources/inventory.csv"));
+        buffWriter.write(String.format("%s|%s|%s",dealership.getName(),dealership.getAddress(),dealership.getPhone()));
+        buffWriter.newLine();
+        for (Vehicle v : dealership.getAllVehicles()){
+            buffWriter.write(String.format("%d|%d|%s|%s|%s|%s|%d|%.2f\n",v.getVin(),v.getYear(),v.getMake(),v.getModel(),v.getVehicleType(),v.getColor(),v.getOdometer(),v.getPrice()));
+            buffWriter.newLine();
+        }
+        buffWriter.close();
+    }catch (Exception e){
+        System.out.println(e.getMessage());
+    }
 
 }
 }
