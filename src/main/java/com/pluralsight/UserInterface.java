@@ -23,8 +23,7 @@ public class UserInterface {
     //helper menu
     private void mainMenu(){
         Scanner scanner = new Scanner(System.in);
-        boolean keepGoing = true;
-        while (keepGoing) {
+
             System.out.printf("\nWelcome to %s Dealership Manager\n", dealership.getName());
             System.out.println("What would you like to do today?");
             System.out.print("[1] Display All Vehicles\n");
@@ -51,8 +50,6 @@ public class UserInterface {
                     break;
                 case 4:
                     //exit
-                    keepGoing = false;
-                    scanner.close();
                     System.exit(0);
                     break;
                 default:
@@ -61,7 +58,7 @@ public class UserInterface {
 
             System.out.println("Press [ENTER] to continue.");
             String enter = scanner.nextLine();
-        }
+
 
     }
     public void filterMenu(){
@@ -174,7 +171,6 @@ public class UserInterface {
         }else{
             System.out.println("No Results found. Please try again.");
         }
-        scanner.close();
 
     }
     public void processGetByYearRequest(){
@@ -192,7 +188,7 @@ public class UserInterface {
         }else{
             System.out.println("No Results found. Please try again.");
         }
-        scanner.close();
+
     }
     public void processGetByColorRequest(){
         Scanner scanner = new Scanner(System.in);
@@ -205,7 +201,7 @@ public class UserInterface {
         }else{
             System.out.println("No Results found. Please try again.");
         }
-        scanner.close();
+
     }
     public void processGetByMileageRequest(){
         Scanner scanner = new Scanner(System.in);
@@ -222,7 +218,7 @@ public class UserInterface {
         }else{
             System.out.println("No Results found. Please try again.");
         }
-        scanner.close();
+
     }
     public void processGetByVehicleTypeRequest(){
         Scanner scanner = new Scanner(System.in);
@@ -235,7 +231,7 @@ public class UserInterface {
         }else{
             System.out.println("No Results found. Please try again.");
         }
-        scanner.close();
+
     }
     public void processGetAllVehiclesRequest(){
         System.out.println("Listing All Vehicles:");
