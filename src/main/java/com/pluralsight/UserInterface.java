@@ -23,7 +23,7 @@ public class UserInterface {
     //helper menu
     private void mainMenu(){
         Scanner scanner = new Scanner(System.in);
-        System.out.printf("\nWelcome to %s's Dealership Manager",dealership.getName());
+        System.out.printf("\nWelcome to %s Dealership Manager\n",dealership.getName());
         System.out.println("What would you like to do today?");
         System.out.print("[1] Display All Vehicles\n");
         System.out.print("[2] Filter View\n");
