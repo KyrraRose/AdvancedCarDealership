@@ -221,6 +221,7 @@ public class UserInterface {
         }
 
     }
+
     public void processGetByVehicleTypeRequest(){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Filter Search by Vehicle Type:\nType: ");
