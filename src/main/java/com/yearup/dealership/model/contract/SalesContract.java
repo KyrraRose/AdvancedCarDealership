@@ -66,7 +66,7 @@ public class SalesContract extends Contract {
                 interestRate = .0525;
                 length = 24;
             }
-            this.monthlyPayment = this.vehicleSold.getPrice() * (interestRate * (Math.pow((1 + interestRate), length) / (Math.pow((1 + interestRate), length) - 1)));
+            this.monthlyPayment = getTotalPrice() * (interestRate * (Math.pow((1 + interestRate), length) / (Math.pow((1 + interestRate), length) - 1)));
         }else{
             this.monthlyPayment = 0;
         }
