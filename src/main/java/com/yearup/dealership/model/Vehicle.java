@@ -1,4 +1,4 @@
-package com.yearup.dealership;
+package com.yearup.dealership.model;
 
 public class Vehicle {
     private int vin,year,odometer;
