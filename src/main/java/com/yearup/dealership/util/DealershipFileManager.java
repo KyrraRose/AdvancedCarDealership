@@ -1,4 +1,4 @@
-package com.yearup.dealership.ui;
+package com.yearup.dealership.util;
 
 import com.yearup.dealership.model.Dealership;
 import com.yearup.dealership.model.Vehicle;

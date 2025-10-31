@@ -5,8 +5,8 @@ import com.yearup.dealership.model.Vehicle;
 public class LeaseContract extends Contract{
     double expectedEndValue,leaseFee;
 
-    public LeaseContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, double totalPrice, double monthlyPayment) {
-        super(date, customerName, customerEmail, vehicleSold, totalPrice, monthlyPayment);
+    public LeaseContract(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+        super(date, customerName, customerEmail, vehicleSold);
         this.expectedEndValue = this.vehicleSold.getPrice()/2;
         this.leaseFee = this.vehicleSold.getPrice()*.07;
     }

@@ -1,8 +1,14 @@
 package com.yearup.dealership.ui;
 
-import com.yearup.dealership.model.Dealership;
-import com.yearup.dealership.model.Vehicle;
+import com.yearup.dealership.model.*;
+import com.yearup.dealership.model.contract.*;
+import com.yearup.dealership.util.*;
 
+
+import javax.sound.midi.Soundbank;
+import java.sql.SQLOutput;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -32,7 +38,8 @@ public class UserInterface {
             System.out.print("[1] Display All Vehicles\n");
             System.out.print("[2] Filter View\n");
             System.out.print("[3] Edit Vehicle Inventory\n");
-            System.out.print("[4] Exit Dealership Manager\n");
+            System.out.print("[4] Record a Contract\n");
+            System.out.print("[5] Exit Dealership Manager\n");
             System.out.print("Type Here: ");
             //Get input
             int userChoice = scanner.nextInt();
@@ -52,6 +59,10 @@ public class UserInterface {
                     editInventory();
                     break;
                 case 4:
+                    //contract
+                    contractMenu();
+                    break;
+                case 5:
                     //exit
                     System.exit(0);
                     break;
@@ -295,34 +306,138 @@ public class UserInterface {
         int vin = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("Year: ");
-        int year = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Make: ");
-        String make = scanner.nextLine();
-
-        System.out.print("Model: ");
-        String model = scanner.nextLine();
-
-        System.out.print("Color: ");
-        String color = scanner.nextLine();
-
-        System.out.print("Mileage: ");
-        int odometer = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Type: ");
-        String type = scanner.nextLine();
-
-        System.out.print("Price: ");
-        double price = scanner.nextDouble();
-        scanner.nextLine();
-
-        Vehicle vehicle = new Vehicle(vin,year,make,model,type,color,odometer,price);
-        dealership.removeVehicle(vehicle);
+        for (Vehicle vehicle : dealership.getAllVehicles()){
+            if (vehicle.getVin() == vin){
+                System.out.printf("%s %s with vin %d removed.",vehicle.getMake(),vehicle.getModel(),vehicle.getVin());
+                dealership.removeVehicle(vehicle);
+            }
+        }
 
         fileManager.saveDealership(this.dealership);
-        System.out.println("Vehicle removed from inventory.");
+
+    }
+
+    public void contractMenu(){
+        Scanner scanner = new Scanner(System.in);
+        boolean keepGoing = true;
+        while (keepGoing) {
+            System.out.println("\nRecord Contract Menu");
+            System.out.println("What is the type of contract?");
+            System.out.println("[1] Sales");
+            System.out.println("[2] Lease");
+            System.out.println("[3] Back to Main Menu");
+            System.out.print("Type Here: ");
+
+            int userChoice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (userChoice) {
+                case 1:
+                    processRecordSalesContractRequest();
+                    break;
+                case 2:
+                    processRecordLeaseContractRequest();
+                    break;
+                case 3:
+                    keepGoing = false;
+                    break;
+            }
+        }
+    }
+    public void processRecordSalesContractRequest(){
+        // initializing variables to use
+        Scanner scanner = new Scanner(System.in);
+        String customerName,customerEmail,isFinance,isCorrect;
+        boolean finance;
+        Vehicle vehicleSold = null;
+        ContractFileManager contractManager = new ContractFileManager();
+        final String salesContractFormat = "SALE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%.2f|%s|%.2f|%.2f";
+
+
+        System.out.println("Record a Sales Contract");
+        System.out.println("Please input customer details.");
+
+        System.out.print("Customer Name: ");
+        customerName = scanner.nextLine();
+
+        System.out.print("Customer Email: ");
+        customerEmail = scanner.nextLine();
+
+        System.out.print("Vehicle VIN: ");
+        int vin = scanner.nextInt();
+        scanner.nextLine();
+
+        for (Vehicle vehicle : dealership.getAllVehicles()){
+            if (vehicle.getVin() == vin){
+                System.out.printf("%s %s with vin %d found.",vehicle.getMake(),vehicle.getModel(),vehicle.getVin());
+                vehicleSold = vehicle;
+            }
+        }
+        System.out.print("Finance Loan (Y/N): ");
+        isFinance = scanner.nextLine().trim().toLowerCase();
+        if (isFinance.contains("y")){
+            finance = true;
+        }else {
+            finance = false;
+        }
+
+        SalesContract contract = new SalesContract(todaysDate(),customerName,customerEmail,vehicleSold,finance);
+        System.out.printf(salesContractFormat, contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail(), contract.getVehicleSold().getVin(), contract.getVehicleSold().getYear(), contract.getVehicleSold().getMake(), contract.getVehicleSold().getModel(), contract.getVehicleSold().getVehicleType(),contract.getSalesTax(),contract.getRecordingFee(),contract.getProcessingFee(),isFinance,contract.getTotalPrice(),contract.getMonthlyPayment());
+        System.out.println();
+        System.out.print("Is this information correct?\nType Here (Y/N): ");
+        isCorrect = scanner.nextLine().trim().toLowerCase();
+        if (isCorrect.contains("y")){
+            contractManager.saveContract(contract);
+            System.out.println("Sales Contract Saved Successfully.");
+        }else {
+            System.out.println("Contract Information Incorrect. Exiting.");
+        }
+
+    }
+    public void processRecordLeaseContractRequest(){
+        // initializing variables to use
+        Scanner scanner = new Scanner(System.in);
+        String customerName,customerEmail,isCorrect;
+        Vehicle vehicleSold = null;
+        ContractFileManager contractManager = new ContractFileManager();
+        final String leaseContractFormat = "LEASE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%.2f";
+
+
+        System.out.println("Record a Sales Contract");
+        System.out.println("Please input customer details.");
+
+        System.out.print("Customer Name: ");
+        customerName = scanner.nextLine();
+
+        System.out.print("Customer Email: ");
+        customerEmail = scanner.nextLine();
+
+        System.out.print("Vehicle VIN: ");
+        int vin = scanner.nextInt();
+        scanner.nextLine();
+
+        for (Vehicle vehicle : dealership.getAllVehicles()){
+            if (vehicle.getVin() == vin){
+                System.out.printf("%s %s with vin %d found.",vehicle.getMake(),vehicle.getModel(),vehicle.getVin());
+                vehicleSold = vehicle;
+            }
+        }
+
+        LeaseContract contract = new LeaseContract(todaysDate(),customerName,customerEmail,vehicleSold);
+        System.out.printf(leaseContractFormat, contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail(), contract.getVehicleSold().getVin(), contract.getVehicleSold().getYear(), contract.getVehicleSold().getMake(), contract.getVehicleSold().getModel(), contract.getVehicleSold().getVehicleType(),contract.getTotalPrice(),contract.getMonthlyPayment());
+        System.out.println();
+        System.out.print("Is this information correct?\nType Here (Y/N): ");
+        isCorrect = scanner.nextLine().trim().toLowerCase();
+        if (isCorrect.contains("y")){
+            contractManager.saveContract(contract);
+            System.out.println("Sales Contract Saved Successfully.");
+        }else {
+            System.out.println("Contract Information Incorrect. Exiting.");
+        }
+    }
+    public String todaysDate(){
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        return today.format(format);
     }
 }
