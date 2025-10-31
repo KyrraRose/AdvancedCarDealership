@@ -5,8 +5,6 @@ import com.yearup.dealership.model.contract.*;
 import com.yearup.dealership.util.*;
 
 
-import javax.sound.midi.Soundbank;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -347,7 +345,7 @@ public class UserInterface {
     public void processRecordSalesContractRequest(){
         // initializing variables to use
         Scanner scanner = new Scanner(System.in);
-        String customerName,customerEmail,isFinance,isCorrect;
+        String customerName,customerEmail, customerFinance,isCorrect;
         boolean finance;
         Vehicle vehicleSold = null;
         ContractFileManager contractManager = new ContractFileManager();
@@ -369,20 +367,24 @@ public class UserInterface {
 
         for (Vehicle vehicle : dealership.getAllVehicles()){
             if (vehicle.getVin() == vin){
-                System.out.printf("%s %s with vin %d found.",vehicle.getMake(),vehicle.getModel(),vehicle.getVin());
+                System.out.printf("%s %s with vin %d found.\n",vehicle.getMake(),vehicle.getModel(),vehicle.getVin());
                 vehicleSold = vehicle;
             }
         }
         System.out.print("Finance Loan (Y/N): ");
-        isFinance = scanner.nextLine().trim().toLowerCase();
-        if (isFinance.contains("y")){
+        customerFinance = scanner.nextLine().trim().toLowerCase();
+
+        if (customerFinance.contains("y")){
             finance = true;
+            customerFinance = "YES";
+
         }else {
             finance = false;
+            customerFinance = "NO";
         }
 
         SalesContract contract = new SalesContract(todaysDate(),customerName,customerEmail,vehicleSold,finance);
-        System.out.printf(salesContractFormat, contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail(), contract.getVehicleSold().getVin(), contract.getVehicleSold().getYear(), contract.getVehicleSold().getMake(), contract.getVehicleSold().getModel(), contract.getVehicleSold().getVehicleType(),contract.getSalesTax(),contract.getRecordingFee(),contract.getProcessingFee(),isFinance,contract.getTotalPrice(),contract.getMonthlyPayment());
+        System.out.printf(salesContractFormat, contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail(), contract.getVehicleSold().getVin(), contract.getVehicleSold().getYear(), contract.getVehicleSold().getMake(), contract.getVehicleSold().getModel(), contract.getVehicleSold().getVehicleType(),contract.getVehicleSold().getColor(),contract.getVehicleSold().getOdometer(),contract.getVehicleSold().getPrice(),contract.getSalesTax(),contract.getRecordingFee(),contract.getProcessingFee(), customerFinance,contract.getTotalPrice(),contract.getMonthlyPayment());
         System.out.println();
         System.out.print("Is this information correct?\nType Here (Y/N): ");
         isCorrect = scanner.nextLine().trim().toLowerCase();
